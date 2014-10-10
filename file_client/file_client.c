@@ -42,12 +42,13 @@ int serv_recv(int sockfd, char **res)
 
     *res = NULL;
     total = 0;
-    while (1)
+    bytes_recieved = 1;
+    while (bytes_recieved != 0)
     {
         FD_ZERO(&readfds);
         FD_SET(sockfd, &readfds);
-        tv.tv_sec = 3;
-        tv.tv_usec = 0;
+        tv.tv_sec = 5;  /* Twice as long as the server waits*/ 
+        tv.tv_usec = 0; /* so it doesn't miss the response. */
         retval = select(sockfd+1, &readfds, NULL, NULL, &tv);
 
         *res = realloc(*res, total + LINE_LEN);

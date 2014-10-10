@@ -30,7 +30,6 @@ int client_send(int sockfd, const char* buf, int size)
         }
         total += bytes_sent;
     }
-    printf ("Sent %d bytes\n", total);
     return 0;
 }
 
@@ -43,7 +42,8 @@ int client_recv(int sockfd, char **res)
 
     *res = NULL;
     total = 0;
-    while (1)
+    bytes_recieved = 1;
+    while (bytes_recieved != 0)
     {
         FD_ZERO(&readfds);
         FD_SET(sockfd, &readfds);
