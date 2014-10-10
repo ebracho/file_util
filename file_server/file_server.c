@@ -20,7 +20,7 @@
 int client_send(int sockfd, const char* buf, int size)
 {
     int bytes_sent, total;
-
+    
     total = 0;
     while (total < size)
     {
@@ -30,16 +30,17 @@ int client_send(int sockfd, const char* buf, int size)
         }
         total += bytes_sent;
     }
-    printf ("Send %d bytes\n", total);
+    printf ("Sent %d bytes\n", total);
     return 0;
 }
 
 /* Recieve message from client until it times out */
-int client_recv(int sockfd, char* buf)
+int client_recv(int sockfd, char** res)
 {
     fd_set readfds;
     struct timeval tv;
     int bytes_recieved, total, retval;
+    char *buf = NULL;
 
     total = 0;
     while (1)
@@ -67,12 +68,15 @@ int client_recv(int sockfd, char* buf)
 
         total += bytes_recieved;
     }
+    *res = malloc(total);
+    memcpy(*res, buf, total);
     return total;
 }
 
-int read_file(char *filename, char *buf)
+int read_file(char *filename, char **res)
 {
     int fd, bytes_read, total;
+    char *buf = NULL;
 
     if ((fd = open(filename, O_RDONLY, 0)) == -1)
     {
@@ -88,8 +92,10 @@ int read_file(char *filename, char *buf)
             return -1; /* read error */
         }
         total += bytes_read;
-        printf("read %d bytes\n", total);
     } while (bytes_read != 0);
+
+    *res = malloc(total);
+    memcpy(*res, buf, total);
 
     close(fd);
     return total;
@@ -172,8 +178,7 @@ int main(int argc, char *argv[])
     }
 
     /* Recieve filename from client */
-    filename = malloc(LINE_LEN);
-    if (client_recv(new_s, filename) == -1)
+    if (client_recv(new_s, &filename) == -1)
     {
         perror("client_recv()");
         close(s);
@@ -184,15 +189,14 @@ int main(int argc, char *argv[])
     if (debug) printf("Filename: %s\n", filename);
 
     /* Open and read file. If errors occur, set fcontents to error value */
-    fcontents = malloc(ERR_LEN);
-    if ((size = read_file(filename, fcontents)) == -1)
+    if ((size = read_file(filename, &fcontents)) == -1)
     {
         perror("read_file()");
         fcontents = FILE_ERR;
         size = ERR_LEN;
     }
 
-    if (debug) printf("Read file contents.\n");
+    if (debug) printf("File Contents:\n%s\n", fcontents);
 
     /* Send contents (or error value) to client */
     if (client_send(new_s, fcontents, size) == -1)
@@ -210,4 +214,4 @@ int main(int argc, char *argv[])
     close(new_s);
 
     return 0;
-    }
+}

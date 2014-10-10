@@ -34,11 +34,14 @@ int serv_send(int sockfd, const char* buf, int size)
 }
 
 /* Recieve message from server until it times out. Returns # bytes recieved */
-int serv_recv(int sockfd, char* buf)
+int serv_recv(int sockfd, char** res)
 {
     fd_set readfds;
     struct timeval tv;
     int bytes_recieved, total, retval;
+    char *buf = NULL;
+
+    printf("%d\n", sockfd);
 
     total = 0;
     while (1)
@@ -55,7 +58,7 @@ int serv_recv(int sockfd, char* buf)
         {
             return -1;
         }
-        if (retval == 0) /* server timed out */
+        if (retval == 0) /* client timed out */
         {
             break;
         }
@@ -66,7 +69,9 @@ int serv_recv(int sockfd, char* buf)
 
         total += bytes_recieved;
     }
-    printf("Recieved %d bytes\n", total);
+    printf("Recieved %d bytes\n", bytes_recieved);
+    *res = malloc(total);
+    memcpy(*res, buf, total);
     return total;
 }
 
@@ -161,8 +166,8 @@ int main(int argc, char *argv[])
     }
 
     /* Recieve the server's response */
-    fcontents = malloc(ERR_LEN); 
-    if ((size = serv_recv(s, fcontents)) == -1)
+    fcontents = NULL;
+    if ((size = serv_recv(s, &fcontents)) == -1)
     {
         perror("serv_recv()");
         close(s);
