@@ -41,6 +41,7 @@ int client_recv(int sockfd, char **res)
     struct timeval tv;
     int bytes_recieved, total, retval;
 
+    *res = NULL;
     total = 0;
     while (1)
     {
@@ -60,7 +61,7 @@ int client_recv(int sockfd, char **res)
         {
             break;
         }
-        if ((bytes_recieved = recv(sockfd, (*res)+total, LINE_LEN, 0)) == -1) 
+        if ((bytes_recieved = recv(sockfd, *res+total, LINE_LEN, 0)) == -1) 
         {
             return -1; /* recv error */
         }
@@ -73,26 +74,23 @@ int client_recv(int sockfd, char **res)
 int read_file(char *filename, char **res)
 {
     int fd, bytes_read, total;
-    char *buf = NULL;
 
     if ((fd = open(filename, O_RDONLY, 0)) == -1)
     {
         return -1; /* open error */
     }
 
+    *res = NULL;
     total = 0;
     do
     {
-        buf = realloc(buf, total + LINE_LEN);
-        if ((bytes_read = read(fd, buf+total, LINE_LEN)) == -1)
+        *res = realloc(*res, total + LINE_LEN);
+        if ((bytes_read = read(fd, *res+total, LINE_LEN)) == -1)
         {
             return -1; /* read error */
         }
         total += bytes_read;
     } while (bytes_read != 0);
-
-    *res = malloc(total);
-    memcpy(*res, buf, total);
 
     close(fd);
     return total;

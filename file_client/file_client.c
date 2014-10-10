@@ -40,8 +40,7 @@ int serv_recv(int sockfd, char **res)
     struct timeval tv;
     int bytes_recieved, total, retval;
 
-    printf("%d\n", sockfd);
-
+    *res = NULL;
     total = 0;
     while (1)
     {
@@ -61,7 +60,7 @@ int serv_recv(int sockfd, char **res)
         {
             break;
         }
-        if ((bytes_recieved = recv(sockfd, (*res)+total, LINE_LEN, 0)) == -1) 
+        if ((bytes_recieved = recv(sockfd, *res+total, LINE_LEN, 0)) == -1) 
         {
             return -1; /* recv error */
         }
