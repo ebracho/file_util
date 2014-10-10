@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
     }
 
     /* Recieve filename from client */
+    filename = NULL;
     if (client_recv(new_s, &filename) == -1)
     {
         perror("client_recv()");
