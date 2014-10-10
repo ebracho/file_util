@@ -35,7 +35,7 @@ int client_send(int sockfd, const char* buf, int size)
 }
 
 /* Recieve message from client until it times out */
-int client_recv(int sockfd, char** res)
+int client_recv(int sockfd, char **res)
 {
     fd_set readfds;
     struct timeval tv;

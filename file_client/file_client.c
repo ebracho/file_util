@@ -34,7 +34,7 @@ int serv_send(int sockfd, const char* buf, int size)
 }
 
 /* Recieve message from server until it times out. Returns # bytes recieved */
-int serv_recv(int sockfd, char** res)
+int serv_recv(int sockfd, char **res)
 {
     fd_set readfds;
     struct timeval tv;
