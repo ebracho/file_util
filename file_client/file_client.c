@@ -1,4 +1,6 @@
-/* file_client.c */
+/*file_client.c 
+* Eddie Bracho
+* Taber Storm Fitzgerald*/
 
 #include <sys/types.h>
 #include <sys/socket.h>

@@ -1,4 +1,6 @@
-/* file_server.c */
+/*file_server.c 
+* Eddie Bracho
+* Taber Storm Fitzgerald*/
 
 #include <sys/types.h>
 #include <sys/socket.h>
